@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom'
 import { Movie } from '../types'
+import { optimizePoster } from '../utils/image'
 
 interface Props { movie: Movie }
 
@@ -9,7 +10,7 @@ export default function MovieCard({ movie }: Props) {
       <div className="relative aspect-[2/3] overflow-hidden">
         {movie.poster ? (
           <img
-            src={movie.poster}
+            src={optimizePoster(movie.poster, 400)}
             alt={movie.titleRu}
             referrerPolicy="no-referrer"
             loading="lazy"

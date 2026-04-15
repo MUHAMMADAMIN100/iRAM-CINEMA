@@ -4,6 +4,7 @@ import { format } from 'date-fns'
 import { ru } from 'date-fns/locale'
 import api from '../api/axios'
 import { Booking } from '../types'
+import { optimizePoster } from '../utils/image'
 
 export default function BookingConfirmation() {
   const { id } = useParams<{ id: string }>()
@@ -37,7 +38,7 @@ export default function BookingConfirmation() {
       <div className="card p-6 mb-4">
         <div className="flex items-center gap-3 mb-4 pb-4 border-b border-cinema-border">
           {booking.session.movie.poster && (
-            <img src={booking.session.movie.poster} alt="" referrerPolicy="no-referrer" className="w-14 h-20 object-cover rounded-lg" />
+            <img src={optimizePoster(booking.session.movie.poster, 200)} alt="" referrerPolicy="no-referrer" className="w-14 h-20 object-cover rounded-lg" />
           )}
           <div>
             <h2 className="font-bold text-white">{booking.session.movie.titleRu}</h2>
