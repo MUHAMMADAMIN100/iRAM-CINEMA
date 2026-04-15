@@ -35,7 +35,7 @@ export default function MovieDetail() {
       {/* Hero banner */}
       <div className="relative h-72 sm:h-96 overflow-hidden">
         {movie.poster && (
-          <img src={movie.poster} alt="" className="w-full h-full object-cover object-top blur-sm scale-110 opacity-30" />
+          <img src={movie.poster} alt="" referrerPolicy="no-referrer" className="w-full h-full object-cover object-top blur-sm scale-110 opacity-30" />
         )}
         <div className="absolute inset-0 bg-gradient-to-t from-cinema-dark via-cinema-dark/60 to-transparent" />
       </div>
@@ -46,7 +46,7 @@ export default function MovieDetail() {
           <div className="flex-shrink-0 mx-auto md:mx-0">
             <div className="w-48 sm:w-56 card overflow-hidden">
               {movie.poster
-                ? <img src={movie.poster} alt={movie.titleRu} className="w-full aspect-[2/3] object-cover" />
+                ? <img src={movie.poster} alt={movie.titleRu} referrerPolicy="no-referrer" className="w-full aspect-[2/3] object-cover" />
                 : <div className="aspect-[2/3] bg-cinema-border flex items-center justify-center text-4xl">🎬</div>
               }
             </div>

@@ -129,7 +129,7 @@ export default function ManageMovies() {
           {movies.map(m => (
             <div key={m.id} className="card p-4 flex items-center gap-4">
               {m.poster
-                ? <img src={m.poster} alt="" className="w-12 h-16 object-cover rounded-lg flex-shrink-0" />
+                ? <img src={m.poster} alt="" referrerPolicy="no-referrer" className="w-12 h-16 object-cover rounded-lg flex-shrink-0" />
                 : <div className="w-12 h-16 bg-cinema-border rounded-lg flex items-center justify-center text-xl flex-shrink-0">🎬</div>
               }
               <div className="flex-1 min-w-0">

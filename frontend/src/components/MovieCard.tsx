@@ -11,6 +11,9 @@ export default function MovieCard({ movie }: Props) {
           <img
             src={movie.poster}
             alt={movie.titleRu}
+            referrerPolicy="no-referrer"
+            loading="lazy"
+            onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = 'none' }}
             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
           />
         ) : (
