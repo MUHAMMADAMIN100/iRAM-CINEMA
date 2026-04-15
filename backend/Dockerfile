@@ -12,7 +12,7 @@ RUN npx prisma generate
 
 COPY . .
 
-RUN npm run build && ls -la dist
+RUN rm -f tsconfig.tsbuildinfo && rm -rf dist && npm run build && ls -la dist
 
 RUN npm prune --omit=dev
 
