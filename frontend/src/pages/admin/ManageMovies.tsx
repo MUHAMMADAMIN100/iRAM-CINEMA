@@ -11,6 +11,8 @@ export default function ManageMovies() {
   const [showForm, setShowForm] = useState(false)
   const [editing, setEditing] = useState<Movie | null>(null)
   const [form, setForm] = useState(EMPTY)
+  const [deleteTarget, setDeleteTarget] = useState<Movie | null>(null)
+  const [deleting, setDeleting] = useState(false)
 
   const load = () => api.get('/movies').then(r => { setMovies(r.data); setLoading(false) })
   useEffect(() => { load() }, [])
@@ -36,10 +38,19 @@ export default function ManageMovies() {
     } catch { toast.error('Ошибка сохранения') }
   }
 
-  const handleDelete = async (id: string) => {
-    if (!confirm('Удалить фильм?')) return
-    try { await api.delete(`/movies/${id}`); toast.success('Удалено'); load() }
-    catch { toast.error('Ошибка') }
+  const confirmDelete = async () => {
+    if (!deleteTarget) return
+    setDeleting(true)
+    try {
+      await api.delete(`/movies/${deleteTarget.id}`)
+      setMovies(prev => prev.filter(m => m.id !== deleteTarget.id))
+      toast.success(`«${deleteTarget.titleRu}» удалён`)
+      setDeleteTarget(null)
+    } catch {
+      toast.error('Не удалось удалить')
+    } finally {
+      setDeleting(false)
+    }
   }
 
   return (
@@ -93,6 +104,26 @@ export default function ManageMovies() {
         </div>
       )}
 
+      {deleteTarget && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm p-4" onClick={() => !deleting && setDeleteTarget(null)}>
+          <div className="card p-6 max-w-sm w-full" onClick={e => e.stopPropagation()}>
+            <div className="flex items-start gap-4">
+              <div className="w-10 h-10 rounded-full bg-cinema-red/20 flex items-center justify-center text-cinema-red text-xl flex-shrink-0">⚠</div>
+              <div className="flex-1">
+                <h3 className="font-bold text-white text-base mb-1">Удалить фильм?</h3>
+                <p className="text-sm text-gray-400 break-words">Вы уверены, что хотите удалить «<span className="text-white">{deleteTarget.titleRu}</span>»? Это действие нельзя отменить.</p>
+              </div>
+            </div>
+            <div className="flex gap-3 justify-end mt-6">
+              <button type="button" disabled={deleting} onClick={() => setDeleteTarget(null)} className="btn-outline py-2 px-4 text-sm disabled:opacity-50">Отмена</button>
+              <button type="button" disabled={deleting} onClick={confirmDelete} className="py-2 px-4 text-sm rounded-lg bg-cinema-red text-white hover:bg-red-600 transition disabled:opacity-50">
+                {deleting ? 'Удаление...' : 'Удалить'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {loading ? <div className="text-gray-500 text-sm">Загрузка...</div> : (
         <div className="space-y-3">
           {movies.map(m => (
@@ -111,7 +142,7 @@ export default function ManageMovies() {
               <div className="flex gap-2 flex-shrink-0">
                 <span className={`text-xs ${m.isActive ? 'text-green-400' : 'text-gray-600'}`}>{m.isActive ? '● Активен' : '● Скрыт'}</span>
                 <button onClick={() => openEdit(m)} className="text-xs text-gray-400 hover:text-white border border-cinema-border rounded px-2 py-1">✎</button>
-                <button onClick={() => handleDelete(m.id)} className="text-xs text-cinema-red hover:text-red-400 border border-cinema-border rounded px-2 py-1">✕</button>
+                <button onClick={() => setDeleteTarget(m)} className="text-xs text-cinema-red hover:text-red-400 border border-cinema-border rounded px-2 py-1">✕</button>
               </div>
             </div>
           ))}
