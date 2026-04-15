@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { Link } from 'react-router-dom'
 import api from '../../api/axios'
 
 interface Stats {
@@ -50,10 +51,10 @@ export default function Dashboard() {
             { href: '/admin/bookings', label: '📋 Все бронирования' },
             { href: '/movies', label: '🎬 Открыть сайт' },
           ].map(a => (
-            <a key={a.label} href={a.href}
+            <Link key={a.label} to={a.href}
               className="card hover:border-cinema-red transition-colors p-3 text-sm text-gray-400 hover:text-white text-center">
               {a.label}
-            </a>
+            </Link>
           ))}
         </div>
       </div>
