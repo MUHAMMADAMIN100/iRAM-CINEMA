@@ -12,7 +12,11 @@ RUN npx prisma generate
 
 COPY . .
 
-RUN rm -f tsconfig.tsbuildinfo && rm -rf dist && npm run build && ls -la dist
+RUN rm -f tsconfig.tsbuildinfo && rm -rf dist && \
+    echo "=== src contents ===" && ls -la src && \
+    echo "=== running tsc directly ===" && npx tsc -p tsconfig.json && \
+    echo "=== dist contents ===" && ls -la dist && \
+    test -f dist/main.js
 
 RUN npm prune --omit=dev
 
