@@ -1,0 +1,120 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  USER
+  ADMIN
+}
+
+enum BookingStatus {
+  PENDING
+  CONFIRMED
+  CANCELLED
+}
+
+enum SeatStatus {
+  AVAILABLE
+  BOOKED
+  RESERVED
+}
+
+model User {
+  id        String    @id @default(cuid())
+  email     String    @unique
+  name      String
+  phone     String?
+  password  String
+  role      Role      @default(USER)
+  bookings  Booking[]
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+}
+
+model Genre {
+  id     String  @id @default(cuid())
+  name   String  @unique
+  movies Movie[] @relation("MovieGenres")
+}
+
+model Movie {
+  id          String    @id @default(cuid())
+  title       String
+  titleRu     String
+  description String
+  poster      String?
+  trailer     String?
+  duration    Int
+  rating      Float     @default(0)
+  language    String    @default("RU")
+  ageLimit    String    @default("12+")
+  isActive    Boolean   @default(true)
+  genres      Genre[]   @relation("MovieGenres")
+  sessions    Session[]
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+model Hall {
+  id       String    @id @default(cuid())
+  name     String
+  rows     Int
+  sessions Session[]
+  seats    Seat[]
+}
+
+model Seat {
+  id       String     @id @default(cuid())
+  hallId   String
+  hall     Hall       @relation(fields: [hallId], references: [id])
+  row      Int
+  number   Int
+  type     String     @default("standard")
+  tickets  Ticket[]
+}
+
+model Session {
+  id        String    @id @default(cuid())
+  movieId   String
+  movie     Movie     @relation(fields: [movieId], references: [id])
+  hallId    String
+  hall      Hall      @relation(fields: [hallId], references: [id])
+  startTime DateTime
+  endTime   DateTime
+  price     Float
+  isActive  Boolean   @default(true)
+  bookings  Booking[]
+  tickets   Ticket[]
+  createdAt DateTime  @default(now())
+}
+
+model Booking {
+  id        String        @id @default(cuid())
+  userId    String
+  user      User          @relation(fields: [userId], references: [id])
+  sessionId String
+  session   Session       @relation(fields: [sessionId], references: [id])
+  status    BookingStatus @default(PENDING)
+  total     Float
+  tickets   Ticket[]
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
+}
+
+model Ticket {
+  id        String     @id @default(cuid())
+  bookingId String
+  booking   Booking    @relation(fields: [bookingId], references: [id])
+  sessionId String
+  session   Session    @relation(fields: [sessionId], references: [id])
+  seatId    String
+  seat      Seat       @relation(fields: [seatId], references: [id])
+  qrCode    String?
+  status    SeatStatus @default(RESERVED)
+  createdAt DateTime   @default(now())
+}
