@@ -22,8 +22,16 @@ export default function ManageSessions() {
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault()
+    const startDate = new Date(form.startTime)
+    if (isNaN(startDate.getTime())) { toast.error('Неверная дата'); return }
+    if (startDate.getTime() < Date.now()) { toast.error('Время сеанса уже прошло'); return }
     try {
-      await api.post('/sessions', { ...form, price: Number(form.price) })
+      await api.post('/sessions', {
+        movieId: form.movieId,
+        hallId: form.hallId,
+        startTime: startDate.toISOString(),
+        price: Number(form.price),
+      })
       toast.success('Сеанс создан'); setShowForm(false); load()
     } catch (err: any) { toast.error(err.response?.data?.message || 'Ошибка') }
   }
