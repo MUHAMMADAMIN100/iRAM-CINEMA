@@ -5,6 +5,7 @@ const links = [
   { to: '/admin/movies', label: '🎬 Фильмы' },
   { to: '/admin/sessions', label: '🕐 Сеансы' },
   { to: '/admin/bookings', label: '🎫 Бронирования' },
+  { to: '/admin/individual-bookings', label: '🎉 Индивидуальные' },
 ]
 
 export default function AdminLayout() {

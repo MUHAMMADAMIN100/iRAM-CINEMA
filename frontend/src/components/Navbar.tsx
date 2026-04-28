@@ -28,6 +28,7 @@ export default function Navbar() {
           <div className="hidden md:flex items-center gap-6">
             <Link to="/" className={`text-sm font-medium transition-colors ${isActive('/') ? 'text-cinema-red' : 'text-gray-400 hover:text-white'}`}>Главная</Link>
             <Link to="/movies" className={`text-sm font-medium transition-colors ${isActive('/movies') ? 'text-cinema-red' : 'text-gray-400 hover:text-white'}`}>Фильмы</Link>
+            <Link to="/individual" className={`text-sm font-medium transition-colors ${isActive('/individual') ? 'text-cinema-red' : 'text-gray-400 hover:text-white'}`}>Индивидуальный</Link>
             {user?.role === 'ADMIN' && (
               <Link to="/admin" className="text-sm font-medium text-cinema-gold hover:text-yellow-400 transition-colors">Админ</Link>
             )}
@@ -67,6 +68,7 @@ export default function Navbar() {
           <div className="md:hidden py-4 border-t border-cinema-border space-y-3">
             <Link to="/" onClick={() => setMenuOpen(false)} className="block text-sm text-gray-300 hover:text-white py-1">Главная</Link>
             <Link to="/movies" onClick={() => setMenuOpen(false)} className="block text-sm text-gray-300 hover:text-white py-1">Фильмы</Link>
+            <Link to="/individual" onClick={() => setMenuOpen(false)} className="block text-sm text-gray-300 hover:text-white py-1">Индивидуальный</Link>
             {user?.role === 'ADMIN' && <Link to="/admin" onClick={() => setMenuOpen(false)} className="block text-sm text-cinema-gold py-1">Админ</Link>}
             {user ? (
               <>

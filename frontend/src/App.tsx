@@ -11,11 +11,13 @@ import BookingConfirmation from './pages/BookingConfirmation'
 import Profile from './pages/Profile'
 import Login from './pages/Login'
 import Register from './pages/Register'
+import IndividualBooking from './pages/IndividualBooking'
 import AdminLayout from './pages/admin/AdminLayout'
 import Dashboard from './pages/admin/Dashboard'
 import ManageMovies from './pages/admin/ManageMovies'
 import ManageSessions from './pages/admin/ManageSessions'
 import ManageBookings from './pages/admin/ManageBookings'
+import ManageIndividualBookings from './pages/admin/ManageIndividualBookings'
 
 function ProtectedRoute({ children, admin }: { children: JSX.Element; admin?: boolean }) {
   const { user, token } = useAuthStore()
@@ -50,6 +52,7 @@ export default function App() {
           } />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
+          <Route path="/individual" element={<IndividualBooking />} />
           <Route path="/admin" element={
             <ProtectedRoute admin><AdminLayout /></ProtectedRoute>
           }>
@@ -57,6 +60,7 @@ export default function App() {
             <Route path="movies" element={<ManageMovies />} />
             <Route path="sessions" element={<ManageSessions />} />
             <Route path="bookings" element={<ManageBookings />} />
+            <Route path="individual-bookings" element={<ManageIndividualBookings />} />
           </Route>
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
