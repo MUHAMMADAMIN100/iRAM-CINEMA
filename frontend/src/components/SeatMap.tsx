@@ -38,11 +38,10 @@ export default function SeatMap({ seats, selectedSeats, onToggle }: Props) {
 
   const renderPair = (row: number, pair: Pair, key: number) => {
     if (pair === null) {
-      // Empty slot — keeps spacing of one pair
-      return <div key={key} className="w-[58px] sm:w-[66px]" aria-hidden />
+      return <div key={key} className="w-9 sm:w-11 md:w-14 lg:w-16" aria-hidden />
     }
     return (
-      <div key={key} className="flex gap-[2px]">
+      <div key={key} className="flex">
         {pair.map(num => {
           const seat = seatMap.get(`${row}-${num}`)
           const cls = getSeatClass(seat)
@@ -53,7 +52,7 @@ export default function SeatMap({ seats, selectedSeats, onToggle }: Props) {
               type="button"
               title={`Ряд ${row}, Место ${num}`}
               onClick={() => isClickable && seat && onToggle(seat)}
-              className={`w-7 h-7 sm:w-8 sm:h-8 text-[10px] sm:text-xs font-semibold flex items-center justify-center ${cls}`}
+              className={`w-[18px] h-[18px] sm:w-5 sm:h-5 md:w-7 md:h-7 lg:w-8 lg:h-8 text-[8px] sm:text-[9px] md:text-[10px] lg:text-xs font-semibold flex items-center justify-center ${cls}`}
             >
               {num}
             </button>
@@ -64,15 +63,15 @@ export default function SeatMap({ seats, selectedSeats, onToggle }: Props) {
   }
 
   return (
-    <div className="select-none">
+    <div className="select-none w-full">
       {/* Screen */}
-      <div className="mb-6 text-center">
+      <div className="mb-5 text-center">
         <div className="mx-auto w-3/4 h-2 bg-gradient-to-r from-transparent via-cinema-red to-transparent rounded-full mb-2" />
         <p className="text-xs text-gray-500 tracking-widest uppercase">Экран</p>
       </div>
 
       {/* Legend */}
-      <div className="flex items-center justify-center gap-6 mb-6 flex-wrap">
+      <div className="flex items-center justify-center gap-4 sm:gap-6 mb-5 flex-wrap">
         {[
           { cls: 'bg-gray-700', label: 'Свободно' },
           { cls: 'bg-cinema-red', label: 'Выбрано' },
@@ -85,37 +84,35 @@ export default function SeatMap({ seats, selectedSeats, onToggle }: Props) {
         ))}
       </div>
 
-      {/* Seat map with entrance arrow on the left */}
-      <div className="relative">
+      {/* Seat map */}
+      <div className="relative w-full">
         {/* Entrance label (top-left, arrow pointing left) */}
-        <div className="hidden sm:flex absolute -left-2 top-2 items-center gap-1 text-[10px] text-cinema-gold/80 font-bold tracking-wider">
+        <div className="hidden md:flex absolute left-0 top-2 items-center gap-1 text-[10px] text-cinema-gold/80 font-bold tracking-wider">
           <span>←</span>
           <span>ВХОД</span>
         </div>
 
-        <div className="overflow-x-auto pb-4">
-          <div className="min-w-max mx-auto flex flex-col items-center gap-2 px-6 sm:px-10">
-            {HALL_LAYOUT.map(({ row, left, right }) => (
-              <div key={row} className="flex items-center gap-2">
-                {/* Left section */}
-                <div className="flex gap-[6px] items-center">
-                  {left.map((pair, i) => renderPair(row, pair, i))}
-                </div>
-
-                {/* Center "stairs" — row label */}
-                <div className="w-14 sm:w-16 flex items-center justify-center">
-                  <span className="text-[11px] sm:text-xs font-bold text-gray-300 px-2 py-1 rounded bg-cinema-card/40 border border-cinema-border/40">
-                    {row} ряд
-                  </span>
-                </div>
-
-                {/* Right section */}
-                <div className="flex gap-[6px] items-center">
-                  {right.map((pair, i) => renderPair(row, pair, i))}
-                </div>
+        <div className="w-full flex flex-col items-center gap-1.5 sm:gap-2 md:gap-2.5">
+          {HALL_LAYOUT.map(({ row, left, right }) => (
+            <div key={row} className="flex items-center justify-center gap-2 sm:gap-3 md:gap-4 lg:gap-5">
+              {/* Left section */}
+              <div className="flex items-center gap-2 sm:gap-3 md:gap-4 lg:gap-5">
+                {left.map((pair, i) => renderPair(row, pair, i))}
               </div>
-            ))}
-          </div>
+
+              {/* Center "stairs" — row label */}
+              <div className="flex items-center justify-center flex-shrink-0">
+                <span className="text-[9px] sm:text-[10px] md:text-[11px] lg:text-xs font-bold text-gray-300 px-1.5 sm:px-2 py-0.5 sm:py-1 rounded bg-cinema-card/40 border border-cinema-border/40 whitespace-nowrap">
+                  {row} ряд
+                </span>
+              </div>
+
+              {/* Right section */}
+              <div className="flex items-center gap-2 sm:gap-3 md:gap-4 lg:gap-5">
+                {right.map((pair, i) => renderPair(row, pair, i))}
+              </div>
+            </div>
+          ))}
         </div>
       </div>
 
