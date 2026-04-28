@@ -6,18 +6,19 @@ interface Props {
   onToggle: (seat: Seat) => void
 }
 
+type Pair = number[] | null
+
 type RowDef = {
   row: number
-  left: number[][]
-  right: number[][]
-  spacedRight?: boolean
+  left: Pair[]
+  right: Pair[]
 }
 
 const HALL_LAYOUT: RowDef[] = [
   { row: 1, left: [[1,2],[3,4],[5,6]], right: [[7,8],[9,10],[11,12]] },
   { row: 2, left: [[1,2],[3,4],[5,6]], right: [[7,8],[9,10],[11,12]] },
   { row: 3, left: [[1,2],[3,4],[5,6]], right: [[7,8],[9,10],[11,12]] },
-  { row: 4, left: [[1,2]], right: [[3,4],[5,6],[7,8]], spacedRight: true },
+  { row: 4, left: [[1,2], null, [3,4]], right: [[5,6], null, [7,8]] },
   { row: 5, left: [[1,2],[3,4],[5,6],[7,8]], right: [[9,10],[11,12],[13,14],[15,16]] },
   { row: 6, left: [[1,2],[3,4],[5,6],[7,8],[9,10]], right: [[11,12],[13,14],[15,16],[17,18],[19,20]] },
   { row: 7, left: [[1,2],[3,4],[5,6],[7,8],[9,10]], right: [[11,12],[13,14],[15,16],[17,18],[19,20]] },
@@ -35,26 +36,32 @@ export default function SeatMap({ seats, selectedSeats, onToggle }: Props) {
     return 'seat-available'
   }
 
-  const renderPair = (row: number, pair: number[]) => (
-    <div className="flex gap-[2px]">
-      {pair.map(num => {
-        const seat = seatMap.get(`${row}-${num}`)
-        const cls = getSeatClass(seat)
-        const isClickable = seat && (seat.status === 'AVAILABLE' || !seat.status || selectedSeats.includes(seat.id))
-        return (
-          <button
-            key={num}
-            type="button"
-            title={`Ряд ${row}, Место ${num}`}
-            onClick={() => isClickable && seat && onToggle(seat)}
-            className={`w-7 h-7 sm:w-8 sm:h-8 text-[10px] sm:text-xs font-semibold flex items-center justify-center ${cls}`}
-          >
-            {num}
-          </button>
-        )
-      })}
-    </div>
-  )
+  const renderPair = (row: number, pair: Pair, key: number) => {
+    if (pair === null) {
+      // Empty slot — keeps spacing of one pair
+      return <div key={key} className="w-[58px] sm:w-[66px]" aria-hidden />
+    }
+    return (
+      <div key={key} className="flex gap-[2px]">
+        {pair.map(num => {
+          const seat = seatMap.get(`${row}-${num}`)
+          const cls = getSeatClass(seat)
+          const isClickable = seat && (seat.status === 'AVAILABLE' || !seat.status || selectedSeats.includes(seat.id))
+          return (
+            <button
+              key={num}
+              type="button"
+              title={`Ряд ${row}, Место ${num}`}
+              onClick={() => isClickable && seat && onToggle(seat)}
+              className={`w-7 h-7 sm:w-8 sm:h-8 text-[10px] sm:text-xs font-semibold flex items-center justify-center ${cls}`}
+            >
+              {num}
+            </button>
+          )
+        })}
+      </div>
+    )
+  }
 
   return (
     <div className="select-none">
@@ -88,13 +95,11 @@ export default function SeatMap({ seats, selectedSeats, onToggle }: Props) {
 
         <div className="overflow-x-auto pb-4">
           <div className="min-w-max mx-auto flex flex-col items-center gap-2 px-6 sm:px-10">
-            {HALL_LAYOUT.map(({ row, left, right, spacedRight }) => (
+            {HALL_LAYOUT.map(({ row, left, right }) => (
               <div key={row} className="flex items-center gap-2">
                 {/* Left section */}
                 <div className="flex gap-[6px] items-center">
-                  {left.map((pair, i) => (
-                    <div key={i}>{renderPair(row, pair)}</div>
-                  ))}
+                  {left.map((pair, i) => renderPair(row, pair, i))}
                 </div>
 
                 {/* Center "stairs" — row label */}
@@ -104,11 +109,9 @@ export default function SeatMap({ seats, selectedSeats, onToggle }: Props) {
                   </span>
                 </div>
 
-                {/* Right section (with extra spacing for row 4) */}
-                <div className={`flex items-center ${spacedRight ? 'gap-5' : 'gap-[6px]'}`}>
-                  {right.map((pair, i) => (
-                    <div key={i}>{renderPair(row, pair)}</div>
-                  ))}
+                {/* Right section */}
+                <div className="flex gap-[6px] items-center">
+                  {right.map((pair, i) => renderPair(row, pair, i))}
                 </div>
               </div>
             ))}
